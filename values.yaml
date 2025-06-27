@@ -37,19 +37,38 @@ gateway:
     nginx_http_keepalive_requests: "100000"
     proxy_access_log: "off"
     dns_stale_ttl: "3600"
+    KONG_DATABASE: "off"
+    KONG_DECLARATIVE_CONFIG: "/opt/kong/kong.yaml"
+    KONG_PROXY_ACCESS_LOG: /dev/stdout
+    KONG_ADMIN_ACCESS_LOG: /dev/stdout
+    KONG_PROXY_ERROR_LOG: /dev/stderr
+    KONG_ADMIN_ERROR_LOG: /dev/stderr
+    KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl
+  ports:
+    - "80:8000"
+    - "443:8443"
+    - "8001:8001"
+    - "8444:8444"
+  volumes:
+    - "./kong.yaml:/opt/kong/kong.yaml"
+  healthcheck:
+    test: ["CMD", "kong", "health"]
+    interval: 10s
+    timeout: 10s
+    retries: 10
     # enforce_rbac: "on"
-    admin_gui_auth: basic-auth
-    admin_gui_path: /
-    admin_gui_url: https://kong-manager.scaleton.biz
-    admin_gui_ssl_cert: /etc/secrets/kong-manager-tls/tls.crt
-    admin_gui_ssl_cert_key: /etc/secrets/kong-manager-tls/tls.key
-    admin_gui_session_conf: '{"secret":"3d45c5539ec6e306cd41154cf40b6801","storage":"kong","cookie_secure":true}'
-  resources:
-    requests:
-      cpu: 1
-      memory: "2Gi"
-  secretVolumes:
+  #   admin_gui_auth: basic-auth
+  #   admin_gui_path: /
+  #   admin_gui_url: https://kong-manager.scaleton.biz
+  #   admin_gui_ssl_cert: /etc/secrets/kong-manager-tls/tls.crt
+  #   admin_gui_ssl_cert_key: /etc/secrets/kong-manager-tls/tls.key
+  #   admin_gui_session_conf: '{"secret":"3d45c5539ec6e306cd41154cf40b6801","storage":"kong","cookie_secure":true}'
+  # resources:
+  #   requests:
+  #     cpu: 1
+  #     memory: "2Gi"
+  # secretVolumes:
     # - konnect-client-tls
-    - kong-manager-tls
-  manager:
-    enabled: false
+  #   - kong-manager-tls
+  # manager:
+  #   enabled: false
