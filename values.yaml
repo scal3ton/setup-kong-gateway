@@ -40,7 +40,19 @@ admin:
     enabled: true
     port: 8444
     containerPort: 8444
-    
+  # ingress:
+  #   enabled: true
+  #   hostname: kong-manager.scaleton.biz
+  #   path: /
+  #   pathType: Prefix
+  #   ingressClassName: kong
+  #   annotations:
+  #     konghq.com/plugins: cors-plugin
+  #     kubernetes.io/ingress.class: kong
+  #   tls:
+  #     - hosts:
+  #         - kong-manager.scaleton.biz
+  #       secretName: kong-manager-tls
 manager:
   enabled: true
   http:
