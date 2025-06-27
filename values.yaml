@@ -11,7 +11,14 @@ controller:
       controlPlaneID: "636a4d43-c3b4-43ee-8fcc-31e22dc42a55"
       tlsClientCertSecretName: konnect-client-tls
       apiHostname: "us.kic.api.konghq.com"
-
+      
+admin:
+  enabled: true
+  http:
+    enabled: true
+  tls:
+    enabled: true
+    
 gateway:
   image:
     repository: kong/kong-gateway
