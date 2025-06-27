@@ -1,23 +1,3 @@
-admin:
-  enabled: true
-  http:
-    enabled: true
-    port: 8001
-    containerPort: 8001
-  tls:
-    enabled: true
-    port: 8444
-    containerPort: 8444
-manager:
-  enabled: true
-  http:
-    enabled: true
-    port: 8002
-    containerPort: 8002
-  tls:
-    enabled: true
-    port: 8445
-    containerPort: 8445
 gateway:
   image:
     repository: kong/kong-gateway
@@ -39,17 +19,35 @@ gateway:
     nginx_http_keepalive_requests: "100000"
     proxy_access_log: "off"
     dns_stale_ttl: "3600"
-    KONG_DATABASE: "off"
-    KONG_DECLARATIVE_CONFIG: "/opt/kong/kong.yaml"
-    KONG_PROXY_ACCESS_LOG: /dev/stdout
-    KONG_ADMIN_ACCESS_LOG: /dev/stdout
-    KONG_PROXY_ERROR_LOG: /dev/stderr
-    KONG_ADMIN_ERROR_LOG: /dev/stderr
-  extraVolumes:
-    - name: kong-declarative-config-volume
-      configMap:
-        name: kong-declarative-config
-  extraVolumeMounts:
-    - name: kong-declarative-config-volume
-      mountPath: /opt/kong/kong.yaml
-      subPath: kong.yaml
+    # Database configuration (using DB-less mode for simplicity)
+    database: "off"
+    # Kong Manager configuration (3.10 compatible)
+    admin_gui_url: "https://kong-manager.local:8445"
+    admin_gui_api_url: "https://kong-admin.local:8444"
+    admin_gui_path: "/"
+    proxy_access_log: /dev/stdout
+    admin_access_log: /dev/stdout
+    proxy_error_log: /dev/stderr
+    admin_error_log: /dev/stderr
+
+admin:
+  enabled: true
+  http:
+    enabled: true
+    port: 8001
+    containerPort: 8001
+  tls:
+    enabled: true
+    port: 8444
+    containerPort: 8444
+    
+manager:
+  enabled: true
+  http:
+    enabled: true
+    port: 8002
+    containerPort: 8002
+  tls:
+    enabled: true
+    port: 8445
+    containerPort: 8445
