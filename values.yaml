@@ -39,7 +39,7 @@ gateway:
     dns_stale_ttl: "3600"
     enforce_rbac: "on"
     admin_gui_auth: basic-auth
-    admin_gui_path: /manager
+    admin_gui_path: /
     admin_gui_url: https://kong-manager.scaleton.biz
     admin_gui_ssl_cert: /etc/secrets/kong-manager-tls/tls.crt
     admin_gui_ssl_cert_key: /etc/secrets/kong-manager-tls/tls.key
