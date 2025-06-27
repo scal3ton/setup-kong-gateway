@@ -1,36 +1,38 @@
-# controller:
-#   ingressController:
-#     image:
-#       tag: "3.4"
-#     env:
-#       feature_gates: "FillIDs=true"
-#     konnect:
-#       license:
-#         enabled: false
-#       enabled: false
-#       controlPlaneID: "636a4d43-c3b4-43ee-8fcc-31e22dc42a55"
-#       tlsClientCertSecretName: konnect-client-tls
-#       apiHostname: "us.kic.api.konghq.com"
-      
 admin:
   enabled: true
   http:
     enabled: true
+    port: 8001
+    containerPort: 8001
   tls:
     enabled: true
-    
+    port: 8444
+    containerPort: 8444
+manager:
+  enabled: true
+  http:
+    enabled: true
+    port: 8002
+    containerPort: 8002
+  tls:
+    enabled: true
+    port: 8445
+    containerPort: 8445
 gateway:
   image:
     repository: kong/kong-gateway
     tag: "3.10"
+  service:
+    http:
+      enabled: true
+      port: 80
+      targetPort: 8000
+    https:
+      enabled: true
+      port: 443
+      targetPort: 8443
   env:
-    # konnect_mode: "on"
     vitals: "off"
-    # cluster_mtls: pki
-    # cluster_telemetry_endpoint: "5849f33321.us.tp0.konghq.com:443"
-    # cluster_telemetry_server_name: "5849f33321.us.tp0.konghq.com"
-    # cluster_cert: /etc/secrets/konnect-client-tls/tls.crt
-    # cluster_cert_key: /etc/secrets/konnect-client-tls/tls.key
     lua_ssl_trusted_certificate: system
     nginx_worker_processes: "1"
     upstream_keepalive_max_requests: "100000"
@@ -43,32 +45,11 @@ gateway:
     KONG_ADMIN_ACCESS_LOG: /dev/stdout
     KONG_PROXY_ERROR_LOG: /dev/stderr
     KONG_ADMIN_ERROR_LOG: /dev/stderr
-    KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl
-  ports:
-    - "80:8000"
-    - "443:8443"
-    - "8001:8001"
-    - "8444:8444"
-  volumes:
-    - "./kong.yaml:/opt/kong/kong.yaml"
-  healthcheck:
-    test: ["CMD", "kong", "health"]
-    interval: 10s
-    timeout: 10s
-    retries: 10
-    # enforce_rbac: "on"
-  #   admin_gui_auth: basic-auth
-  #   admin_gui_path: /
-  #   admin_gui_url: https://kong-manager.scaleton.biz
-  #   admin_gui_ssl_cert: /etc/secrets/kong-manager-tls/tls.crt
-  #   admin_gui_ssl_cert_key: /etc/secrets/kong-manager-tls/tls.key
-  #   admin_gui_session_conf: '{"secret":"3d45c5539ec6e306cd41154cf40b6801","storage":"kong","cookie_secure":true}'
-  # resources:
-  #   requests:
-  #     cpu: 1
-  #     memory: "2Gi"
-  # secretVolumes:
-    # - konnect-client-tls
-  #   - kong-manager-tls
-  # manager:
-  #   enabled: false
+  extraVolumes:
+    - name: kong-declarative-config-volume
+      configMap:
+        name: kong-declarative-config
+  extraVolumeMounts:
+    - name: kong-declarative-config-volume
+      mountPath: /opt/kong/kong.yaml
+      subPath: kong.yaml
