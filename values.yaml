@@ -37,7 +37,7 @@ gateway:
     nginx_http_keepalive_requests: "100000"
     proxy_access_log: "off"
     dns_stale_ttl: "3600"
-    enforce_rbac: "on"
+    # enforce_rbac: "on"
     admin_gui_auth: basic-auth
     admin_gui_path: /
     admin_gui_url: https://kong-manager.scaleton.biz
