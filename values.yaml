@@ -1,35 +1,20 @@
-gateway:
-  image:
-    repository: kong/kong-gateway
-    tag: "3.10"
-  service:
-    http:
-      enabled: true
-      port: 80
-      targetPort: 8000
-    https:
-      enabled: true
-      port: 443
-      targetPort: 8443
-  env:
-    vitals: "off"
-    lua_ssl_trusted_certificate: system
-    nginx_worker_processes: "1"
-    upstream_keepalive_max_requests: "100000"
-    nginx_http_keepalive_requests: "100000"
-    proxy_access_log: "off"
-    dns_stale_ttl: "3600"
-    # Database configuration (using DB-less mode for simplicity)
-    database: "off"
-    # Kong Manager configuration (3.10 compatible)
-    admin_gui_url: "https://kong-manager.local:8445"
-    admin_gui_api_url: "https://kong-admin.local:8444"
-    admin_gui_path: "/"
-    proxy_access_log: /dev/stdout
-    admin_access_log: /dev/stdout
-    proxy_error_log: /dev/stderr
-    admin_error_log: /dev/stderr
-
+image:
+  repository: kong/kong-gateway
+  tag: "3.10"
+env:
+  vitals: "off"
+  lua_ssl_trusted_certificate: system
+  nginx_worker_processes: "1"
+  upstream_keepalive_max_requests: "100000"
+  nginx_http_keepalive_requests: "100000"
+  proxy_access_log: "off"
+  dns_stale_ttl: "3600"
+  database: "off"
+  log_level: debug
+  proxy_access_log: /dev/stdout
+  admin_access_log: /dev/stdou
+  proxy_error_log: /dev/stderr
+  admin_error_log: /dev/stderr
 admin:
   enabled: true
   http:
@@ -40,19 +25,6 @@ admin:
     enabled: true
     port: 8444
     containerPort: 8444
-  # ingress:
-  #   enabled: true
-  #   hostname: kong-manager.scaleton.biz
-  #   path: /
-  #   pathType: Prefix
-  #   ingressClassName: kong
-  #   annotations:
-  #     konghq.com/plugins: cors-plugin
-  #     kubernetes.io/ingress.class: kong
-  #   tls:
-  #     - hosts:
-  #         - kong-manager.scaleton.biz
-  #       secretName: kong-manager-tls
 manager:
   enabled: true
   http:
