@@ -1,1 +1,33 @@
+# kong-values.yaml
+# คอนฟิกสำหรับ Kong Gateway (Open Source) เวอร์ชัน 3.9.1
 
+image:
+  repository: kong/kong
+  tag: "3.9.1"
+
+# เปิดใช้งานในโหมด DB-less (ไม่ต้องใช้ฐานข้อมูล)
+env:
+  database: "off"
+
+# ตั้งค่า Service สำหรับ Admin API (ให้ Konga เรียกใช้)
+# ใช้ ClusterIP เพื่อความปลอดภัยสูงสุด (จะเข้าถึงได้จากภายใน Kubernetes Cluster เท่านั้น)
+admin:
+  enabled: true
+  type: ClusterIP
+  http:
+    enabled: true
+    servicePort: 8001 # พอร์ตมาตรฐานของ Admin API
+
+# ตั้งค่า Service สำหรับ Proxy (สำหรับรับ Traffic จริงจากผู้ใช้งาน)
+# ใช้ LoadBalancer เพื่อให้เข้าถึงได้จาก LAN (หากใช้บน Cloud)
+# หรือเปลี่ยนเป็น NodePort หากติดตั้งบน Local Kubernetes เช่น Minikube, Docker Desktop
+proxy:
+  type: LoadBalancer
+  http:
+    enabled: true
+    servicePort: 80
+    containerPort: 8000
+  tls:
+    enabled: true
+    servicePort: 443
+    containerPort: 8443
