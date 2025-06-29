@@ -1,0 +1,44 @@
+# konga-deployment.yaml
+# คอนฟิกสำหรับติดตั้ง Konga UI
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: konga
+  namespace: kong # ติดตั้งใน namespace เดียวกับ kong
+  labels:
+    app: konga
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: konga
+  template:
+    metadata:
+      labels:
+        app: konga
+    spec:
+      containers:
+        - name: konga
+          image: pantsel/konga:latest # ใช้ Image อย่างเป็นทางการของ Konga
+          ports:
+            - containerPort: 1337 # พอร์ตมาตรฐานของ Konga
+          env:
+            # สำหรับการศึกษา เราใช้ฐานข้อมูลแบบ file-based (sqlite) ซึ่งง่ายที่สุด
+            - name: DB_ADAPTER
+              value: "sqlite"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: konga-service
+  namespace: kong
+spec:
+  # ใช้ LoadBalancer หรือ NodePort เพื่อให้เข้าถึง UI ได้จาก LAN
+  type: LoadBalancer
+  selector:
+    app: konga
+  ports:
+    - protocol: TCP
+      port: 80 # เปิดพอร์ต 80 ที่ Service
+      targetPort: 1337 # ชี้ไปที่พอร์ตของ Konga container
